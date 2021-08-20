@@ -1,0 +1,1 @@
+web: gunicorn marky_django4.wsgi
