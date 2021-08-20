@@ -16,6 +16,7 @@ from django.shortcuts import get_object_or_404
 from PIL import Image
 from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright
+import asyncio
 
 
 from rest_framework import status
@@ -30,7 +31,7 @@ from user.models import MyUser
 from .models import Article
 from .serializers import ArticleSerializer
 
-from selenium import webdriver
+# from selenium import webdriver
 import os
 
 
@@ -84,14 +85,14 @@ class ArticleAPIView(APIView):
         username = self.request.query_params.get('username')
         category = self.request.query_params.get('category')
         search = self.request.query_params.get('search')
-        print('CATEGORY@@!', category)
+
         if username is not None:
             queryset = queryset.filter(user__username=username)
             if category is not None:
                 queryset = queryset.filter(category__slug=category)
 
         if search is not None:
-            print('SEARCH@@!', search)
+
             queryset = queryset.filter(title__icontains=search)
 
         serializer = self.serializer_class(queryset, many=True)
@@ -114,7 +115,6 @@ class ArticleAPIView(APIView):
         async with async_playwright() as playwright:
             img = await self.run(playwright, url_address)
             return img
-        pass
 
     def upload_cloudinary(self, file, user, slug):
         response = cloudinary.uploader.upload(file,
@@ -172,11 +172,11 @@ class ArticleAPIView(APIView):
 
         # * sync
         img = self.playwright(url_address)
+        # img = asyncio.run(self.main(url_address))
         response = self.upload_cloudinary(img, user, slug)
         img_url = response['url']
 
         # * async
-        # image = asyncio.run(self.main(url_address))
 
         '''
         Key => articles/2/how to deploy django
@@ -194,130 +194,130 @@ class ArticleAPIView(APIView):
         return Response(article, status=res_status.HTTP_201_CREATED)
 
 
-#! PAGE TO PDF
-def send_devtools(driver, cmd, params={}):
-    resource = "/session/%s/chromium/send_command_and_get_result" % driver.session_id
-    url = driver.command_executor._url + resource
-    body = json.dumps({'cmd': cmd, 'params': params})
-    response = driver.command_executor._request('POST', url, body)
-    #print (response)
-    if (response.get('value') is not None):
-        return response.get('value')
-    else:
-        return None
+# #! PAGE TO PDF
+# def send_devtools(driver, cmd, params={}):
+#     resource = "/session/%s/chromium/send_command_and_get_result" % driver.session_id
+#     url = driver.command_executor._url + resource
+#     body = json.dumps({'cmd': cmd, 'params': params})
+#     response = driver.command_executor._request('POST', url, body)
+#     #print (response)
+#     if (response.get('value') is not None):
+#         return response.get('value')
+#     else:
+#         return None
 
 
-def save_as_pdf(driver, options={}):
-    result = send_devtools(driver, "Page.printToPDF", options)
-    if (result is not None):
-        buffer = io.BytesIO()
-        content = base64.b64decode(result['data'])
-        buffer.write(content)
-        return buffer
-    else:
-        return False
+# def save_as_pdf(driver, options={}):
+#     result = send_devtools(driver, "Page.printToPDF", options)
+#     if (result is not None):
+#         buffer = io.BytesIO()
+#         content = base64.b64decode(result['data'])
+#         buffer.write(content)
+#         return buffer
+#     else:
+#         return False
 
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument("--no-sandbox")
-####
-chrome_options.add_argument('--enable-print-browser')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument('--disable-dev-shm-usage')
+# chrome_options.add_argument("--no-sandbox")
+# ####
+# chrome_options.add_argument('--enable-print-browser')
+# chrome_options.add_argument('--disable-gpu')
+# chrome_options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 
-def send_devtools(driver, cmd, params={}):
-    resource = "/session/%s/chromium/send_command_and_get_result" % driver.session_id
-    url = driver.command_executor._url + resource
-    body = json.dumps({'cmd': cmd, 'params': params})
-    response = driver.command_executor._request('POST', url, body)
-    #print (response)
-    if (response.get('value') is not None):
-        return response.get('value')
-    else:
-        return None
+# def send_devtools(driver, cmd, params={}):
+#     resource = "/session/%s/chromium/send_command_and_get_result" % driver.session_id
+#     url = driver.command_executor._url + resource
+#     body = json.dumps({'cmd': cmd, 'params': params})
+#     response = driver.command_executor._request('POST', url, body)
+#     #print (response)
+#     if (response.get('value') is not None):
+#         return response.get('value')
+#     else:
+#         return None
 
 
-def save_as_pdf(driver, options={}):
-    result = send_devtools(driver, "Page.printToPDF", options)
-    if (result is not None):
-        buffer = io.BytesIO()
-        content = base64.b64decode(result['data'])
-        buffer.write(content)
-        return buffer
-    else:
-        return False
+# def save_as_pdf(driver, options={}):
+#     result = send_devtools(driver, "Page.printToPDF", options)
+#     if (result is not None):
+#         buffer = io.BytesIO()
+#         content = base64.b64decode(result['data'])
+#         buffer.write(content)
+#         return buffer
+#     else:
+#         return False
 
 
-class ArticleUploadUrl(APIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ArticleSerializer
+# class ArticleUploadUrl(APIView):
+#     permission_classes = (IsAuthenticated,)
+#     serializer_class = ArticleSerializer
 
-    def post(self, request, **kwargs):
+#     def post(self, request, **kwargs):
 
-        url_address = request.data.get('url_address')
-        status = request.data.get('status') or None
+#         url_address = request.data.get('url_address')
+#         status = request.data.get('status') or None
 
-        print('💚', request.user)
-        print('💚', request.data.get('url_address'))
+#         print('💚', request.user)
+#         print('💚', request.data.get('url_address'))
 
-        html_text = requests.get(url_address).text
-        soup = BeautifulSoup(html_text, 'lxml')
-        # * og
-        title = soup.find('meta', property='og:title') or None
-        title = title['content'] if title != None else soup.title.string
+#         html_text = requests.get(url_address).text
+#         soup = BeautifulSoup(html_text, 'lxml')
+#         # * og
+#         title = soup.find('meta', property='og:title') or None
+#         title = title['content'] if title != None else soup.title.string
 
-        description = soup.find('meta', property='og:description') or None
-        description = description['content'] if description != None else title
-        img = soup.find('meta', property='og:image') or None
-        img = img['content'] if img != None else 'No image'
-        user = MyUser.objects.get(email=request.user).id
+#         description = soup.find('meta', property='og:description') or None
+#         description = description['content'] if description != None else title
+#         img = soup.find('meta', property='og:image') or None
+#         img = img['content'] if img != None else 'No image'
+#         user = MyUser.objects.get(email=request.user).id
 
-        slug = slugify(title)
+#         slug = slugify(title)
 
-        data = {
-            'title': title,
-            'description': description,
-            'url_address': url_address,
-            'status': status,
-            'image': img,
-            'user': user,
-            'slug': slug,
-        }
-        print('💚', data)
+#         data = {
+#             'title': title,
+#             'description': description,
+#             'url_address': url_address,
+#             'status': status,
+#             'image': img,
+#             'user': user,
+#             'slug': slug,
+#         }
+#         print('💚', data)
 
-        serializer = self.serializer_class(data=data)
-        print('why? 💚')
-        serializer.is_valid(raise_exception=True)
+#         serializer = self.serializer_class(data=data)
+#         print('why? 💚')
+#         serializer.is_valid(raise_exception=True)
 
-        driver = webdriver.Chrome(
-            executable_path='/usr/local/bin/chromedriver', chrome_options=chrome_options)
-        driver.get(url_address)
-        pdf = save_as_pdf(driver, {'landscape': False})
+#         driver = webdriver.Chrome(
+#             executable_path='/usr/local/bin/chromedriver', chrome_options=chrome_options)
+#         driver.get(url_address)
+#         pdf = save_as_pdf(driver, {'landscape': False})
 
-        # self.driver.quit()
-        file_obj = pdf
-        file_directory_within_bucket = f'articles/{user}'
-        file_path_within_bucket = os.path.join(
-            file_directory_within_bucket,
-            title
-        )
+#         # self.driver.quit()
+#         file_obj = pdf
+#         file_directory_within_bucket = f'articles/{user}'
+#         file_path_within_bucket = os.path.join(
+#             file_directory_within_bucket,
+#             title
+#         )
 
-        # media_storage.save(file_path_within_bucket, file_obj)
-        # file_url = media_storage.url(file_path_within_bucket)
+#         # media_storage.save(file_path_within_bucket, file_obj)
+#         # file_url = media_storage.url(file_path_within_bucket)
 
-        # data['file_url'] = file_url
-        serializer = self.serializer_class(data=data)
-        print('why? 💚')
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+#         # data['file_url'] = file_url
+#         serializer = self.serializer_class(data=data)
+#         print('why? 💚')
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
 
-        article = serializer.data
-        print(article)
+#         article = serializer.data
+#         print(article)
 
-        return Response(article, status=res_status.HTTP_201_CREATED)
+#         return Response(article, status=res_status.HTTP_201_CREATED)
 
 
 # class FileUploadView(APIView):
