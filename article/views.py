@@ -9,14 +9,12 @@ import cloudinary.api
 import cloudinary.uploader
 import requests
 from bs4 import BeautifulSoup
-# from django.conf import settings
-# from django.db.models import query
-# from django.http import FileResponse
+
+
 from django.shortcuts import get_object_or_404
 from PIL import Image
 from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright
-import asyncio
 
 
 from rest_framework import status
@@ -30,9 +28,6 @@ from user.models import MyUser
 
 from .models import Article
 from .serializers import ArticleSerializer
-
-# from selenium import webdriver
-import os
 
 
 class OneArticleAPIView(APIView):
@@ -98,24 +93,6 @@ class ArticleAPIView(APIView):
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    async def run(self, playwright, url_address):
-        chromium = playwright.chromium
-        browser = await chromium.launch()
-        page = await browser.new_page()
-        await page.goto(url_address)
-        img_bytes = await page.screenshot(full_page=True)
-        pil_image = Image.open(io.BytesIO(img_bytes))
-
-        pil_image.seek(0)
-
-        await browser.close()
-        return pil_image
-
-    async def main(self, url_address):
-        async with async_playwright() as playwright:
-            img = await self.run(playwright, url_address)
-            return img
-
     def upload_cloudinary(self, file, user, slug):
         response = cloudinary.uploader.upload(file,
                                               folder=f'article/{user}/',
@@ -131,7 +108,7 @@ class ArticleAPIView(APIView):
             page.goto(
                 url_address)
             img = page.screenshot(path='sample.png', full_page=True)
-
+            browser.close()
             return img
 
     @permission_classes(IsAuthenticated)
@@ -172,7 +149,6 @@ class ArticleAPIView(APIView):
 
         # * sync
         img = self.playwright(url_address)
-        # img = asyncio.run(self.main(url_address))
         response = self.upload_cloudinary(img, user, slug)
         img_url = response['url']
 

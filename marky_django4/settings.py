@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import django_heroku
-
-
 from datetime import timedelta
 from pathlib import Path
 import cloudinary
@@ -35,7 +33,8 @@ CLOUDINARY_URL = f"cloudinary://{CLOUDINARY_API_KEY}:{CLOUDINARY_API_SECRET}@mar
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-cloudinary.config(cloud_name="marky-agnes", api_key="752165661623711", api_secret="78HHENKbXbDuiOH15m7zlNHw_0A")
+cloudinary.config(cloud_name="marky-agnes", api_key="752165661623711",
+                  api_secret="78HHENKbXbDuiOH15m7zlNHw_0A")
 
 ALLOWED_HOSTS = []
 AUTH_USER_MODEL = "user.MyUser"
