@@ -31,7 +31,7 @@ CLOUDINARY_API_SECRET = "78HHENKbXbDuiOH15m7zlNHw_0A"
 
 CLOUDINARY_URL = f"cloudinary://{CLOUDINARY_API_KEY}:{CLOUDINARY_API_SECRET}@marky-agnes"
 # SECURITY WARNING: don't run with debug turned on in production!
-
+DEBUG = False
 
 cloudinary.config(cloud_name="marky-agnes", api_key="752165661623711",
                   api_secret="78HHENKbXbDuiOH15m7zlNHw_0A")
