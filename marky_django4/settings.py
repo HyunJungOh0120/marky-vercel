@@ -10,10 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-import django_heroku
+
 from datetime import timedelta
 from pathlib import Path
 import cloudinary
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+env_path = Path('.')/'.env'
+load_dotenv(dotenv_path=env_path)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,20 +31,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k#8bb8*#0_e^q8xjbm=#(c8z1f6*ki^dd2z0@qd%+n=p-d5s)0"
 
-CLOUDINARY_NAME = "marky-agnes"
-CLOUDINARY_API_KEY = "752165661623711"
-CLOUDINARY_API_SECRET = "78HHENKbXbDuiOH15m7zlNHw_0A"
 
-CLOUDINARY_URL = f"cloudinary://{CLOUDINARY_API_KEY}:{CLOUDINARY_API_SECRET}@marky-agnes"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-cloudinary.config(cloud_name="marky-agnes", api_key="752165661623711",
-                  api_secret="78HHENKbXbDuiOH15m7zlNHw_0A")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = "user.MyUser"
 
 # Application definition
@@ -179,5 +183,3 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "AUTH_COOKIE": "access_token",
 }
-
-django_heroku.settings(locals())

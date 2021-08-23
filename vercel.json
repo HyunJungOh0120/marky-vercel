@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "marky_django4/wsgi.py",
+      "use": "@ardnt/vercel-python-wsgi",
+      "config": { "maxLambdaSize": "15mb" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "marky_django4/wsgi.py"
+    }
+  ]
+}
