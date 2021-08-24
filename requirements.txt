@@ -9,7 +9,7 @@ Django==3.2.6
 django-cors-headers==3.8.0
 django-filter==2.4.0
 djangorestframework==3.12.4
-djangorestframework-simplejwt==4.8.0
+djangorestframework-simplejwt==4.4.0
 greenlet==1.1.1
 idna==3.2
 lxml==4.6.3
