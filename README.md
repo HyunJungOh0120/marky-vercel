@@ -2,8 +2,6 @@
 
 A Book Mark web-application to collect URLs & write memo, built with Python, Django, ReactJS
 
-[Marky - vercel](https://marky-react.vercel.app/)
-
 [Marky-react github](https://github.com/HyunJungOh0120/marky-react)
 <br/>
 
