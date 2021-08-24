@@ -18,12 +18,19 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers, serializers, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class HomeView(APIView):
+    def get(self, request):
+        return Response({"message": "hi"})
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
+    path('home', HomeView.as_view()),
     path('api/user/', include('user.urls')),
     path('api/articles/', include('article.urls')),
     path('api/memo/', include('memo.urls')),
@@ -31,3 +38,5 @@ urlpatterns = [
 
 
 ]
+
+

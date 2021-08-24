@@ -40,7 +40,7 @@ CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 DEBUG = False
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '.vercel.app']
 AUTH_USER_MODEL = "user.MyUser"
 
 # Application definition
@@ -101,9 +101,11 @@ WSGI_APPLICATION = "marky_django4.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {"ENGINE": "django.db.backends.postgresql_psycopg2", "NAME": "marky-django", "USER": "hyunjungoh"}
-}
+# DATABASES = {
+#     "default": {"ENGINE": "django.db.backends.postgresql_psycopg2", "NAME": "marky-django", "USER": "hyunjungoh"}
+# }
+
+DATABASES={}
 
 
 # Password validation
